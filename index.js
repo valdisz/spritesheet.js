@@ -177,16 +177,24 @@ function generate(files, options, callback) {
   options.prefix = options.hasOwnProperty('prefix') ? options.prefix : '';
   options.divisibleByTwo = options.hasOwnProperty('divisibleByTwo') ? options.divisibleByTwo : false;
   options.cssOrder = options.hasOwnProperty('cssOrder') ? options.cssOrder : null;
+  options.spriteName = null;
 
   files = files.map(function (item, index) {
     var resolvedItem = path.resolve(item);
     var name = "";
-    if (options.fullpath) {
-      name = item.substring(0, item.lastIndexOf("."));
+
+    if (options.spriteName) {
+      name = options.spriteName(item, index)
     }
     else {
-      name = options.prefix + resolvedItem.substring(resolvedItem.lastIndexOf(path.sep) + 1, resolvedItem.lastIndexOf('.'));
+      if (options.fullpath) {
+        name = item.substring(0, item.lastIndexOf("."));
+      }
+      else {
+        name = options.prefix + resolvedItem.substring(resolvedItem.lastIndexOf(path.sep) + 1, resolvedItem.lastIndexOf('.'));
+      }
     }
+
     return {
       index: index,
       path: resolvedItem,
