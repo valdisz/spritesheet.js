@@ -115,7 +115,7 @@ if (!module.parent) {
       if(argv.algorithm !== 'binpacking' || !isNaN(Number(argv.width)) && !isNaN(Number(argv.height))){
         return true;
       }
-      
+
       throw new Error('Width and/or height are not defined for binpacking');
     })
     .demand(1)
@@ -177,32 +177,29 @@ function generate(files, options, callback) {
   options.prefix = options.hasOwnProperty('prefix') ? options.prefix : '';
   options.divisibleByTwo = options.hasOwnProperty('divisibleByTwo') ? options.divisibleByTwo : false;
   options.cssOrder = options.hasOwnProperty('cssOrder') ? options.cssOrder : null;
-  options.spriteName = null;
 
-  files = files.map(function (item, index) {
-    var resolvedItem = path.resolve(item);
-    var name = "";
+    files = files.map(function (item, index) {
+        if (typeof item === 'object') {
+            return item
+        }
 
-    if (options.spriteName) {
-      name = options.spriteName(item, index)
-    }
-    else {
-      if (options.fullpath) {
-        name = item.substring(0, item.lastIndexOf("."));
-      }
-      else {
-        name = options.prefix + resolvedItem.substring(resolvedItem.lastIndexOf(path.sep) + 1, resolvedItem.lastIndexOf('.'));
-      }
-    }
+        var resolvedItem = path.resolve(item);
+        var name = "";
 
-    return {
-      index: index,
-      path: resolvedItem,
-      name: name,
-      extension: path.extname(resolvedItem)
-    };
-  });
+        if (options.fullpath) {
+            name = item.substring(0, item.lastIndexOf("."));
+        }
+        else {
+            name = options.prefix + resolvedItem.substring(resolvedItem.lastIndexOf(path.sep) + 1, resolvedItem.lastIndexOf('.'));
+        }
 
+        return {
+            index: index,
+            path: resolvedItem,
+            name: name,
+            extension: path.extname(resolvedItem)
+        };
+    });
 
   if (!fs.existsSync(options.path) && options.path !== '') fs.mkdirSync(options.path);
 
